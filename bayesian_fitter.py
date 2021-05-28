@@ -135,26 +135,27 @@ def get_bayesian_model_hierarchical(model_type,Y): # modified for accelerated BM
 
     return RBH_model
 
-def get_trace(RB_model):
+def get_trace(RB_model, draws = 2000, tune= 10000, target_accept=0.95, return_inferencedata=True):
     # Gradient-based sampling methods
     # see also: https://docs.pymc.io/notebooks/sampler-stats.html
     # and https://docs.pymc.io/notebooks/api_quickstart.html
     with RB_model:   
-        trace= pm.sample(draws = 2000, tune= 10000, target_accept=0.9, return_inferencedata=True)    
+        trace= pm.sample(draws = draws, tune= tune, target_accept=target_accept,
+                         return_inferencedata=return_inferencedata)    
 
     with RB_model:
         az.plot_trace(trace);
         
     return trace
 
-def get_summary(RB_model, trace, hdi_prob=.94, kind='all'):
+def get_summary(RB_model, trace, round_to=6, hdi_prob=.94, kind='all', ):
     with RB_model:
         #  (hdi_prob=.94 is default)
-        az_summary = az.summary(trace, round_to=4,  hdi_prob=hdi_prob, kind=kind )  
+        az_summary = az.summary(trace, round_to=round_to,  hdi_prob=hdi_prob, kind=kind )  
         
     return az_summary
 
-# obtain EPC from alpha (used by plot_posterior)
+# obtain EPC from alpha (used by plot_posterior) # deprecated, should use scale
 def alpha_to_EPC(alpha):
         return 3*(1-alpha)/4
 
@@ -280,8 +281,8 @@ def get_and_run_seeds(rb_circs, shots, backend, coupling_map,
 
 def get_count_data(result_list, nCliffs):
 ### another way to obtain the observed counts
-#corrected for accomodation pooled data from 2Q and 3Q interleave processes
-    list_bitstring = ['00', '000', '100'] # all bistring with 00 as last characters
+#corrected for accomodation pooled data from 1Q, 2Q and 3Q interleave processes
+    list_bitstring = ['0','00', '000', '100'] # all valid bistrings
     Y_list = []
     for rbseed, result in enumerate(result_list):
         row_list = []
