@@ -454,7 +454,7 @@ def RB_bayesian_results(resmodel, trace, lengths,
     with resmodel:
             ax = az.plot_posterior(trace,  var_names=[p], round_to=4, point_estimate=None, 
                               transform =  alpha_to_EPC)
-            ax.set_xlim(epc_est_fm - 2*epc_est_fm_err, epc_est_fm + 2*epc_est_fm_err)
+            ax.set_xlim(epc_est_a - 6*epc_est_a_err, epc_est_a + 6*epc_est_a_err)
             plt.axvline(x=epc_est_fm,color='cyan',ls="-")     
             if epc_calib != np.nan:
                 plt.axvline(x=epc_calib,color='r',ls=":")
