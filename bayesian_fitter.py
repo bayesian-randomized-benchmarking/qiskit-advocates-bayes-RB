@@ -54,9 +54,10 @@ def obtain_priors_and_data_from_fitter(rbfit, nCliffs, shots, printout = True):
 def get_bayesian_model(model_type,Y,shots,m_gates,mu_AB,cov_AB, alpha_ref,
                             alpha_lower=0.5,alpha_upper=0.999,alpha_testval=0.9,                            
                             p_lower=0.9,p_upper=0.999,p_testval=0.95,
-                            RvsI=None,IvsR=None,sigma_theta=0.004): 
+                            RvsI=None,IvsR=None,sigma_theta=0.001,
+                            sigma_theta_l=0.0005,sigma_theta_u=0.0015): 
 # Bayesian model
-# from https://iopscience.iop.org/arti=RvsI, cle/10.1088/1367-2630/17/1/013042/pdf 
+# from https://iopscience.iop.org/arti=RvsI, cle/1sigma_theta=0.004,0.1088/1367-2630/17/1/013042/pdf 
 # see https://docs.pymc.io/api/model.html
     
     RB_model = pm.Model()
@@ -78,6 +79,18 @@ def get_bayesian_model(model_type,Y,shots,m_gates,mu_AB,cov_AB, alpha_ref,
             theta = pm.Beta("GSP",
                              mu=GSP,
                              sigma = sigma_theta,
+                             shape = Y.shape[1])
+            # Likelihood (sampling distribution) of observations    
+            p = pm.Binomial("Counts_h", p=theta, observed=Y,
+                            n = total_shots)
+            
+        elif model_type == "h_sigma":
+            sigma_t = pm.Uniform("sigma_t",  testval = sigma_theta,
+                                upper = sigma_theta_u, lower = sigma_theta_l)
+            GSP = AB[0]*alpha**m_gates + AB[1]
+            theta = pm.Beta("GSP",
+                             mu=GSP,
+                             sigma = sigma_t,
                              shape = Y.shape[1])
             # Likelihood (sampling distribution) of observations    
             p = pm.Binomial("Counts_h", p=theta, observed=Y,
