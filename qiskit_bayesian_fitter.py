@@ -232,6 +232,25 @@ def reduced_chisquare(ydata, sigma, my_trace):
     theta_stacked = mean_h.θ.values
     r = ydata - theta_stacked
     chisq = np.sum((r / sigma) ** 2)
-    NDF_h = len(ydata) - 3 - 1 # (-1 is for σ_Beta)
-    return chisq/NDF_h
+    NDF = len(ydata) - my_trace.posterior.dims['Tying_Parameters_dim_0'] - 1 
+    # (-1 is for σ_Beta)
+    return chisq/NDF
+
+def get_box_interleaved(my_summary, reduced_chisq):
+    
+    texto = "  alpha = {0:7.4f} ± {1:1.4e}"\
+                .format(my_summary['mean']['Tying_Parameters[1]'],
+                my_summary['sd']['Tying_Parameters[1]']) + "\n"                                          
+
+    texto +=" alpha_c = {0:7.4f} ± {1:1.4e}"\
+                .format(my_summary['mean']['Tying_Parameters[2]'],
+                my_summary['sd']['Tying_Parameters[2]']) + "\n"                                             
+
+    texto +="   EPC = {0:7.4f} ± {1:1.4e}"\
+                .format(my_summary['mean']['EPC'],
+                my_summary['sd']['EPC']) + "\n"
+
+    texto +="             Fit χ² = {0:7.4f} "\
+                .format(reduced_chisq)
+    return texto
     
