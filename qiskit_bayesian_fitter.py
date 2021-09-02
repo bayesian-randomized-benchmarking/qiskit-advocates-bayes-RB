@@ -226,7 +226,7 @@ def plot_epc(my_model, my_trace, epc_calib, epc_est_a,
                    Bayes_legend, LSF_legend), fontsize=12)
     plt.title(epc_title,fontsize=16); 
     
-# perform reduced χ² calculation for Bayes hierarchical (1 curve)
+# perform reduced χ² calculation for Bayes hierarchical
 def reduced_chisquare(ydata, sigma, my_trace): 
     mean_h = my_trace.posterior.mean(dim=['chain', 'draw'])
     theta_stacked = mean_h.θ.values
@@ -246,7 +246,7 @@ def get_box_interleaved(my_summary, reduced_chisq):
                 .format(my_summary['mean']['Tying_Parameters[2]'],
                 my_summary['sd']['Tying_Parameters[2]']) + "\n"                                             
 
-    texto +="   EPC = {0:7.4f} ± {1:1.4e}"\
+    texto +="   EPC = {0:1.4e} ± {1:1.4e}"\
                 .format(my_summary['mean']['EPC'],
                 my_summary['sd']['EPC']) + "\n"
 
